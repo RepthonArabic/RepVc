@@ -1,6 +1,6 @@
-from HuRe import l313l
-from HuRe.core.managers import edit_delete, edit_or_reply
-from HuRe.helpers.utils import mentionuser
+from zthon import zedub
+from zthon.core.managers import edit_delete, edit_or_reply
+from zthon.helpers.utils import mentionuser
 from telethon import functions
 from telethon.errors import ChatAdminRequiredError, UserAlreadyInvitedError
 from telethon.tl.types import Channel, Chat, User
@@ -8,9 +8,9 @@ from telethon.tl.types import Channel, Chat, User
 
 async def get_group_call(chat):
     if isinstance(chat, Channel):
-        result = await l313l(functions.channels.GetFullChannelRequest(channel=chat))
+        result = await zedub(functions.channels.GetFullChannelRequest(channel=chat))
     elif isinstance(chat, Chat):
-        result = await l313l(functions.messages.GetFullChatRequest(chat_id=chat.id))
+        result = await zedub(functions.messages.GetFullChatRequest(chat_id=chat.id))
     return result.full_chat.call
 
 
@@ -29,22 +29,22 @@ async def chat_vc_checker(event, chat, edits=True):
 async def parse_entity(entity):
     if entity.isnumeric():
         entity = int(entity)
-    return await l313l.get_entity(entity)
+    return await zedub.get_entity(entity)
 
 
-@l313l.ar_cmd(pattern="تشغيل_المكالمة")
+@zedub.zed_cmd(pattern="تشغيل_المكالمة")
 async def start_vc(event):
-    vc_chat = await l313l.get_entity(event.chat_id)
+    vc_chat = await zedub.get_entity(event.chat_id)
     gc_call = await chat_vc_checker(event, vc_chat, False)
     if gc_call:
         return await edit_delete(
             event, "**- المكالمة الصوتية بالفعل مشغلة بهذه الدردشة**"
         )
     try:
-        await l313l(
+        await zedub(
             functions.phone.CreateGroupCallRequest(
                 peer=vc_chat,
-                title="الجوكر 🤡",
+                title="ريبـــثون",
             )
         )
         await edit_delete(event, "**- تم بنجاح تشغيل المكالمة الصوتية**")
@@ -52,14 +52,14 @@ async def start_vc(event):
         await edit_delete(event, "**- يجب ان تكون ادمن لتشغيل المكالمة هنا**", time=20)
 
 
-@l313l.ar_cmd(pattern="انهاء_المكالمة")
+@zedub.zed_cmd(pattern="انهاء_المكالمة")
 async def end_vc(event):
-    vc_chat = await l313l.get_entity(event.chat_id)
+    vc_chat = await zedub.get_entity(event.chat_id)
     gc_call = await chat_vc_checker(event, vc_chat)
     if not gc_call:
         return
     try:
-        await l313l(functions.phone.DiscardGroupCallRequest(call=gc_call))
+        await zedub(functions.phone.DiscardGroupCallRequest(call=gc_call))
         await edit_delete(event, "**- تم بنجاح انهاء المكالمة الصوتية**")
     except ChatAdminRequiredError:
         await edit_delete(
@@ -67,11 +67,11 @@ async def end_vc(event):
         )
 
 
-@l313l.ar_cmd(pattern="دعوة ?(.*)?")
+@zedub.zed_cmd(pattern="دعوة ?(.*)?")
 async def inv_vc(event):
     users = event.pattern_match.group(1)
     reply = await event.get_reply_message()
-    vc_chat = await l313l.get_entity(event.chat_id)
+    vc_chat = await zedub.get_entity(event.chat_id)
     gc_call = await chat_vc_checker(event, vc_chat)
     if not gc_call:
         return
