@@ -89,7 +89,7 @@ async def inv_vc(event):
         if isinstance(cc, User):
             user_list.append(cc)
     try:
-        await l313l(
+        await zedub(
             functions.phone.InviteToGroupCallRequest(call=gc_call, users=user_list)
         )
         await edit_delete(event, "**- تم بنجاح دعوة المستخدمين**")
@@ -97,14 +97,14 @@ async def inv_vc(event):
         return await edit_delete(event, "- تم دعوة المستخدم بالاصل", time=20)
 
 
-@l313l.ar_cmd(pattern="معلومات_المكالمة")
+@zedub.zed_cmd(pattern="معلومات_المكالمة")
 async def info_vc(event):
-    vc_chat = await l313l.get_entity(event.chat_id)
+    vc_chat = await zedub.get_entity(event.chat_id)
     gc_call = await chat_vc_checker(event, vc_chat)
     if not gc_call:
         return
     await edit_or_reply(event, "**- جار جلب معلومات المكالمة انتظر قليلا**")
-    call_details = await l313l(
+    call_details = await zedub(
         functions.phone.GetGroupCallRequest(call=gc_call, limit=1)
     )
     grp_call = "**معلومات مكالمة المجموعة**\n\n"
@@ -119,14 +119,14 @@ async def info_vc(event):
     await edit_or_reply(event, grp_call)
 
 
-@l313l.ar_cmd(pattern="تسمية_المكالمة?(.*)?")
+@zedub.zed_cmd(pattern="تسمية_المكالمة?(.*)?")
 async def title_vc(event):
     title = event.pattern_match.group(1)
-    vc_chat = await l313l.get_entity(event.chat_id)
+    vc_chat = await zedub.get_entity(event.chat_id)
     gc_call = await chat_vc_checker(event, vc_chat)
     if not gc_call:
         return
     if not title:
         return await edit_delete("**- يجب عليك كتابة العنوان مع الامر**")
-    await l313l(functions.phone.EditGroupCallTitleRequest(call=gc_call, title=title))
+    await zedub(functions.phone.EditGroupCallTitleRequest(call=gc_call, title=title))
     await edit_delete(event, f"- تم بنجاح تغيير اسم المكالمة الى **{title}**")
